@@ -64,14 +64,14 @@ class RecipeSerializer(ModelSerializer):
         return (request.user.is_authenticated
                 and Favorite.objects.filter(user=request.user,
                                             recipe=obj).exists()
-        )
+                )
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
         return (request.user.is_authenticated
                 and ShoppingCart.objects.filter(user=request.user,
                                                 recipe=obj).exists()
-        )
+                )
 
     def validate(self, data):
         user = self.context.get('request').user
