@@ -1,14 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.serializers import (ModelSerializer,
-                                        ReadOnlyField)
-from recipes.models import (Ingredient,
-                            Tag,
-                            Recipe,
-                            IngredientRecipe,
-                            Favorite,
-                            ShoppingCart)
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer, ReadOnlyField
+
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.serializers import MyUserSerializer
 
 

@@ -1,13 +1,13 @@
-from djoser.views import UserViewSet
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from .models import User, Subscriptions
-from .serializers import SubscribeSerializer
+from .models import Subscriptions, User
 from .pagination import CustomPaginator
+from .serializers import SubscribeSerializer
 
 
 class MyUserViewset(UserViewSet):

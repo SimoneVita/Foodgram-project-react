@@ -1,26 +1,21 @@
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import filters, status
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated)
-from django.http import HttpResponse
-from django.db.models import Sum
-from recipes.models import (Ingredient,
-                            Tag,
-                            Recipe,
-                            Favorite,
-                            ShoppingCart,
-                            IngredientRecipe)
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
-from .permissions import CustomPermission, IsAdminOrReadOnly
-from .pagination import CustomPaginator
-from .serializers import (IngredientSerializer,
-                          TagSerializer,
-                          RecipeSerializer,
-                          SubscribeCartSerializer)
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import User
+
+from .pagination import CustomPaginator
+from .permissions import CustomPermission, IsAdminOrReadOnly
+from .serializers import (IngredientSerializer, RecipeSerializer,
+                          SubscribeCartSerializer, TagSerializer)
 
 
 class IngredientViewSet(ModelViewSet):

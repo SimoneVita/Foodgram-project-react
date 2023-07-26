@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User, Subscriptions
+from .models import Subscriptions, User
 
 
 class UserAdmin(admin.ModelAdmin):
