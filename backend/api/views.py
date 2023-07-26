@@ -46,7 +46,6 @@ class RecipeViewSet(ModelViewSet):
     lookup_field = "id"
     pagination_class = CustomPaginator
 
-
     def get_queryset(self):
         author_id = self.request.query_params.get('author')
         if author_id:

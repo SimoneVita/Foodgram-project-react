@@ -49,7 +49,6 @@ class Tag(models.Model):
     )
 
     class Meta:
-        #ordering = ('id',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -79,7 +78,10 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
-        validators=(MinValueValidator(1, message='Время приготовления не может быть меньше 1 минуты'),)
+        validators=(MinValueValidator(
+            1,
+            message='Время приготовления не может быть меньше минуты'),
+        )
     )
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -124,7 +126,6 @@ class IngredientRecipe(models.Model):
     )
 
     class Meta:
-        #ordering = ('id',)
         verbose_name = 'Ингредиент-рецепт'
         verbose_name_plural = 'Ингредиенты-рецепты'
 

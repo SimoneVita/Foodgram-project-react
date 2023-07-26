@@ -14,7 +14,6 @@ class MyUserViewset(UserViewSet):
     http_method_names = ['get', 'post', 'delete']
     pagination_class = CustomPaginator
 
-
     @action(
         methods=['POST', 'DELETE'],
         detail=True,
@@ -52,4 +51,3 @@ class MyUserViewset(UserViewSet):
             context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
-
