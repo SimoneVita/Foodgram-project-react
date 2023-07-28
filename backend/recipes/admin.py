@@ -4,6 +4,10 @@ from .models import (Favorite, Ingredient, IngredientRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
+class IngredientRecipeInline(admin.StackedInline):
+    model = IngredientRecipe
+    min_num = 1
+
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name',
                     'measurement_unit',
@@ -22,7 +26,8 @@ class RecipeAdmin(admin.ModelAdmin):
                     'author',
                     )
     list_filter = ('name', 'author',
-                   ("tags", admin.RelatedOnlyFieldListFilter),)
+                   ('tags', admin.RelatedOnlyFieldListFilter),)
+    inlines = (IngredientRecipeInline, )
 
 
 class IngredientRecipeAdmin(admin.ModelAdmin):

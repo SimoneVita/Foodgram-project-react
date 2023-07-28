@@ -10,7 +10,7 @@ from .pagination import CustomPaginator
 from .serializers import SubscribeSerializer
 
 
-class MyUserViewset(UserViewSet):
+class CustomUserViewset(UserViewSet):
     http_method_names = ['get', 'post', 'delete']
     pagination_class = CustomPaginator
 
@@ -25,7 +25,7 @@ class MyUserViewset(UserViewSet):
         if self.request.method == 'POST':
             serializer = SubscribeSerializer(author,
                                              data=request.data,
-                                             context={"request": request})
+                                             context={'request': request})
             serializer.is_valid(raise_exception=True)
             Subscriptions.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

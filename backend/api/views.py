@@ -24,7 +24,7 @@ class IngredientViewSet(ModelViewSet):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('^name',)
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    lookup_field = "id"
+    lookup_field = 'id'
     http_method_names = ['get']
     pagination_class = None
 
@@ -33,7 +33,7 @@ class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAdminOrReadOnly,)
-    lookup_field = "id"
+    lookup_field = 'id'
     http_method_names = ['get']
     pagination_class = None
 
@@ -43,7 +43,7 @@ class RecipeViewSet(ModelViewSet):
     serializer_class = RecipeSerializer
     permission_classes = (CustomPermission, )
     http_method_names = ['get', 'post', 'patch', 'delete']
-    lookup_field = "id"
+    lookup_field = 'id'
     pagination_class = CustomPaginator
 
     def get_queryset(self):
@@ -69,13 +69,16 @@ class RecipeViewSet(ModelViewSet):
         author = self.request.user
         serializer.save(author=author)
 
-    def add_model(self, model, user, id):
+    def add_model(self, model, request, id):
+        user = self.request.user
         recipe = get_object_or_404(Recipe, id=id)
-        if model.objects.filter(user=user, recipe=recipe).exists():
-            return Response({'errors': 'Рецепт уже был добавлен!'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = SubscribeCartSerializer(
+            recipe,
+            data=request.data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
         model.objects.create(user=user, recipe=recipe)
-        serializer = SubscribeCartSerializer(recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def remove_model(self, model, user, id):
@@ -94,7 +97,7 @@ class RecipeViewSet(ModelViewSet):
     )
     def favorite(self, request, id):
         if request.method == 'POST':
-            return self.add_model(Favorite, request.user, id)
+            return self.add_model(Favorite, request, id)
         return self.remove_model(Favorite, request.user, id)
 
     @action(
@@ -104,7 +107,7 @@ class RecipeViewSet(ModelViewSet):
     )
     def shopping_cart(self, request, id):
         if request.method == 'POST':
-            return self.add_model(ShoppingCart, request.user, id)
+            return self.add_model(ShoppingCart, request, id)
         return self.remove_model(ShoppingCart, request.user, id)
 
     @action(

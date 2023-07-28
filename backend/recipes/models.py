@@ -1,8 +1,13 @@
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import (MinValueValidator,
+                                    MaxValueValidator,
+                                    RegexValidator)
 from django.db import models
 
 from users.models import User
 
+
+min_num = 1
+max_num = 32000
 
 class Ingredient(models.Model):
     """Ингредиенты."""
@@ -49,6 +54,7 @@ class Tag(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -78,9 +84,15 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
-        validators=(MinValueValidator(
-            1,
-            message='Время приготовления не может быть меньше минуты'),
+        validators=(
+            MinValueValidator(
+                min_num,
+                message='Время приготовления не может быть меньше минуты'
+            ),
+            MaxValueValidator(
+                max_num,
+                message='32000 минут? Серьезно?'
+            ),
         )
     )
     ingredients = models.ManyToManyField(
@@ -94,9 +106,9 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        ordering = ('-id',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-id',)
 
     def __str__(self):
         return self.name
@@ -120,14 +132,20 @@ class IngredientRecipe(models.Model):
         verbose_name='Количество',
         validators=(
             MinValueValidator(
-                1, message='Минимальное количество 1!'
+                min_num,
+                message='Время приготовления не может быть меньше минуты'
+            ),
+            MaxValueValidator(
+                max_num,
+                message='32000 минут? Серьезно?'
             ),
         )
     )
 
     class Meta:
-        verbose_name = 'Ингредиент-рецепт'
-        verbose_name_plural = 'Ингредиенты-рецепты'
+        ordering = ('recipe',)
+        verbose_name = 'Ингредиент в рецепт'
+        verbose_name_plural = 'Ингредиенты в рецептах'
 
     def __str__(self):
         return (
@@ -155,6 +173,7 @@ class Favorite(models.Model):
     )
 
     class Meta:
+        ordering = ('recipe',)
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
         constraints = [
@@ -184,6 +203,7 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
+        ordering = ('recipe',)
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
         constraints = [

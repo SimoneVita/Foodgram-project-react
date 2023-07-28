@@ -6,7 +6,7 @@ from .validators import (validate_email, validate_username,
                          validate_username_exists)
 
 
-class MyUserCreateSerializer(UserCreateSerializer):
+class CustomUserCreateSerializer(UserCreateSerializer):
     username = serializers.CharField(
         max_length=150,
         validators=[validate_username, validate_username_exists],
@@ -24,7 +24,7 @@ class MyUserCreateSerializer(UserCreateSerializer):
         )
 
 
-class MyUserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     def get_is_subscribed(self, obj):
@@ -40,12 +40,12 @@ class MyUserSerializer(serializers.ModelSerializer):
         )
 
 
-class SubscribeSerializer(MyUserSerializer):
+class SubscribeSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
-    class Meta(MyUserSerializer.Meta):
-        fields = MyUserSerializer.Meta.fields + (
+    class Meta(CustomUserSerializer.Meta):
+        fields = CustomUserSerializer.Meta.fields + (
             'recipes', 'recipes_count'
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
@@ -56,7 +56,7 @@ class SubscribeSerializer(MyUserSerializer):
         if user == author:
             raise serializers.ValidationError(
                 'На самого себя может подписаться только Бузова!')
-        if Subscriptions.objects.filter(author=author, user=user).exists():
+        if author.following.filter(user=user).exists():
             raise serializers.ValidationError(
                 'Уже есть подписка на данного пользователя!')
         return data
