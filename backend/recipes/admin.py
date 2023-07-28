@@ -8,6 +8,7 @@ class IngredientRecipeInline(admin.StackedInline):
     model = IngredientRecipe
     min_num = 1
 
+
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name',
                     'measurement_unit',

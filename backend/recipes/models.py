@@ -9,6 +9,7 @@ from users.models import User
 MIN_VALUE = 1
 MAX_VALUE = 32000
 
+
 class Ingredient(models.Model):
     """Ингредиенты."""
     name = models.CharField(
@@ -132,11 +133,11 @@ class IngredientRecipe(models.Model):
         verbose_name='Количество',
         validators=(
             MinValueValidator(
-                min_num,
+                MIN_VALUE,
                 message='Время приготовления не может быть меньше минуты'
             ),
             MaxValueValidator(
-                max_num,
+                MAX_VALUE,
                 message='32000 минут? Серьезно?'
             ),
         )
