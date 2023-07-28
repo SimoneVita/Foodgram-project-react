@@ -6,8 +6,8 @@ from django.db import models
 from users.models import User
 
 
-min_num = 1
-max_num = 32000
+MIN_VALUE = 1
+MAX_VALUE = 32000
 
 class Ingredient(models.Model):
     """Ингредиенты."""
@@ -86,11 +86,11 @@ class Recipe(models.Model):
         verbose_name='Время приготовления',
         validators=(
             MinValueValidator(
-                min_num,
+                MIN_VALUE,
                 message='Время приготовления не может быть меньше минуты'
             ),
             MaxValueValidator(
-                max_num,
+                MAX_VALUE,
                 message='32000 минут? Серьезно?'
             ),
         )
