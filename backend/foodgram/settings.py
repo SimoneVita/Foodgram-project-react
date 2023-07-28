@@ -99,9 +99,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#STATICFILES_DIRS = ((BASE_DIR / 'static/'),)  # нужно будет скрыть перед деплоем
+# STATICFILES_DIRS = ((BASE_DIR / 'static/'),)  # нужно будет скрыть перед деплоем
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  #нужно будет отрыть перед деплоем
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # нужно будет отрыть перед деплоем
 
 MEDIA_URL = '/media/'
 
