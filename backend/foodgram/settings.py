@@ -63,8 +63,12 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432')
     }
 }
 
@@ -95,9 +99,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = ((BASE_DIR / 'static/'),)  # нужно будет скрыть перед деплоем
+#STATICFILES_DIRS = ((BASE_DIR / 'static/'),)  # нужно будет скрыть перед деплоем
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static') нужно будет отрыть перед деплоем
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  #нужно будет отрыть перед деплоем
 
 MEDIA_URL = '/media/'
 
@@ -136,4 +140,4 @@ DJOSER = {
     },
 }
 
-# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -108,14 +108,15 @@ class RecipeSerializer(ModelSerializer):
         if not ingredients:
             raise serializers.ValidationError(
                 'Блюдо должно содержать хотя бы 1 ингредиент!')
-        i_set = {}
+        i_set = set()
         for i in ingredients:
             ingredient = get_object_or_404(Ingredient,
                                            id=i['id'])
             if ingredient in i_set:
                 raise serializers.ValidationError(
                     f'Ингредиент {ingredient.name} уже добавлен!')
-            i_set.append(ingredient)
+            i_set.add(ingredient)
+        data['ingredients'] = ingredients
         return data
 
     def ingredientsrecipe_create(self, ingredients, recipe):
