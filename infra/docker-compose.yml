@@ -10,7 +10,7 @@ services:
 
   web:
     container_name: web
-    image: simonevita/diploma_work:v1.2
+    image: simonevita/diploma_work:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -21,7 +21,7 @@ services:
       - ./.env
 
   frontend:
-    image: simonevita/diploma_work:v1.2
+    image: simonevita/diploma_work:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
