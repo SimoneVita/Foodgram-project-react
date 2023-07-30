@@ -1,14 +1,15 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag, TagsRecipes)
 from rest_framework import filters, status
 from rest_framework.decorators import action
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag, TagsRecipes)
 
 from .pagination import CustomPaginator
 from .permissions import CustomPermission, IsAdminOrReadOnly
@@ -48,14 +49,18 @@ class RecipeViewSet(ModelViewSet):
         queryset = self.queryset
         tags = self.request.query_params.getlist('tags')
         if tags:
-            queryset = queryset.filter(tags__slug__in=tags).distinct()
+            queryset = queryset.filter(
+                tags__slug__in=tags
+            ).distinct()
         author = self.request.query_params.get('author')
         if author:
             queryset = queryset.filter(author=author)
         user = self.request.user
         if user.is_anonymous:
             return queryset
-        is_in_shopping_cart = self.request.query_params.get('is_in_shopping_cart')
+        is_in_shopping_cart = self.request.query_params.get(
+            'is_in_shopping_cart'
+        )
         if is_in_shopping_cart in ('1', 'true'):
             queryset = queryset.filter(shopping_cart__user=user.id)
         elif is_in_shopping_cart in ('0', 'false'):
