@@ -1,4 +1,3 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -30,10 +29,8 @@ class IngredientRecipeSerializer(ModelSerializer):
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
     amount = serializers.IntegerField(
-        validators=[
-            MinValueValidator(MIN_VALUE),
-            MaxValueValidator(MAX_VALUE)
-        ]
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE
     )
 
     class Meta:
