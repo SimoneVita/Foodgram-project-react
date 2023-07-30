@@ -1,34 +1,44 @@
-![Github actions](https://github.com/simonevita/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
+![Github actions](https://github.com/simonevita/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
 
-# YaMDb(API)
+# Foodgram
 _________________________________________________
 ## Описание
-База произведений с обзорами, оценками и комментариями, которая находится в контейнере.
+Сайт с рецептами, избранными, корзиной, который находится в контейнере.
 
 ### YaMDB - возможности:
 
-- Просмотреть список доступных произведений
-- Оставлять обзоры, ставить оценки.
-- Обсуждать обзоры в комментариях
-- Посмотреть рейтинг произведения, либо поделиться своим опытом.
-- Обладает удобным API-интерфейсом
+- Создать рецепт.
+- Добавлять другие рецепты в избранное.
+- Подписываться на авторов.
+- Сохранять рецепты в список покупок для его печати.
+- Дополнительно проект обладает удобным API-интерфейсом
  
 _____________________________________________________
 
 ## Техническое описание
 
 ### Примененные технологии
- > Python 3.7.9
- > Django 3.2.16
- > djangorestframework 3.12.4
- > djangorestframework-simplejwt 4.7.2
- > PyJWT 2.1.0
- > Gunicorn 20.0.4
- > Postgres 13.0
- > Nginx 1.21.3
+ > Django==3.2 
+ > djangorestframework==3.12.4 
+ > djoser==2.1.0 
+ > django-filter==22.1 
+ > gunicorn==20.0.4 
+ > psycopg2-binary==2.9.5 
+ > pytz==2020.1 
+ > sqlparse==0.3.1 
+ > python-dotenv==0.21.0 
+ > Pillow==9.5.0
 
 ### Проект доступен по следующей ссылке:
-http://158.160.66.220/redoc/
+http://158.160.23.34/recipes
+
+### Ресурсы API foodgram (основные):
+- Ресурс auth: аутентификация.
+/api/auth/token/login/ /api/auth/token/logout/ - (POST) получение/удаление токена
+- Ресурс users: пользователи. /api/users/{id} - (GET) персональная страница пользователя
+- Ресурс tags: теги. /api/tags/ - (GET) получение списка всех тегов
+- Ресурс ingredients: ингридиенты. /api/recipes/ - (GET) получение списка всех ингредиентов
+- Ресурс recipes: рецепты. /api/recipes/ - (GET) получение списка всех рецептов
 
 ### Как локально запустить проект:
 !!!Запустить на локальной машине Docker!!!
@@ -37,7 +47,7 @@ http://158.160.66.220/redoc/
 Клонировать репозиторий и перейти в него в командной строке:
 
 ```
-git clone https://github.com/SimoneVita/yamdb_final.git
+git clone git@github.com:SimoneVita/foodgram-project-react.git
 ```
 
 ```
@@ -102,9 +112,12 @@ docker-compose exec web python manage.py collectstatic --no-input
 ```
 docker-compose exec web python manage.py createsuperuser
 ```
-Наполнить базу данных тестовыми данными (работает только при пустой базе данных):
+Наполнить базу данных ингридлиентами и тегами:
 ```
 docker-compose exec web python manage.py basefill
+```
+```
+docker-compose exec web python manage.py tagfill
 ```
 
 Документация к APi доступна по адресу: 
@@ -113,7 +126,7 @@ http://localhost/redoc/
 ```
 Образ на Dockerhub:
 ```
-simonevita / api_yamdb
+simonevita / diploma_work
 ```
 
 ## Запуск проекта на боевом сервере
@@ -164,6 +177,12 @@ sudo docker-compose exec web python manage.py collectstatic --no-input
 ```
 sudo docker-compose exec web python manage.py createsuperuser
 ```
+```
+sudo docker-compose exec web python manage.py basefill
+```
+```
+sudo docker-compose exec web python manage.py tagfill
+```
 Проект зарущен, с помощью супрюзера можно подключаться
 
 ## Примеры запросов
@@ -171,26 +190,30 @@ sudo docker-compose exec web python manage.py createsuperuser
 >Тип запроса 
 ```POST```
 >Endpoint 
-```api/v1/auth/signup/```
+```/api/users/```
 
 Запрос:
 ```
 {
-  "email": "user@example.com",
-  "username": "string"
+    "email": "user@yandex.ru",
+    "username": "IvanEX",
+    "first_name": "Ivan",
+    "last_name": "Ivanov",
+    "password": "Qwerty123456789123456789"
 }
 ```
 Ответ:
 ```
 {
-  "email": "string",
-  "username": "string"
+    "email": "user@yandex.ru",
+    "id": 2,
+    "username": "IvanEX",
+    "first_name": "Ivan",
+    "last_name": "Ivanov",
 }
 ```
 ______________________________________
-### Авторы
-Даниил Алексеенко(https://github.com/cra1ger51),
-Андрей Иванишин(https://github.com/AIvanishin),
+### Автор
 Виталий Симоненко(https://github.com/SimoneVita)
 
 ### Лицензия
