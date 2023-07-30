@@ -30,10 +30,8 @@ class IngredientRecipeSerializer(ModelSerializer):
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
     amount = serializers.IntegerField(
-        validators=[
-            MinValueValidator(MIN_VALUE),
-            MaxValueValidator(MAX_VALUE)
-        ]
+        min_value=MIN_VALUE,
+        max_value=MAX_VALUE
     )
 
     class Meta:
@@ -122,10 +120,7 @@ class RecipeSerializer(ModelSerializer):
     def ingredientsrecipe_create(self, ingredients, recipe):
         IngredientRecipe.objects.bulk_create(
             [IngredientRecipe(
-                ingredient=get_object_or_404(
-                    Ingredient,
-                    id=ingredient['id']
-                ),
+                ingredient=Ingredient.objects.get(id=ingredient['id']),
                 recipe=recipe,
                 amount=ingredient['amount']
             ) for ingredient in ingredients]
