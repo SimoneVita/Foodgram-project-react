@@ -22,6 +22,6 @@ class Command(BaseCommand):
                 name, measurement_unit = row
                 Ingredient.objects.get_or_create(
                     name=name,
-                    umeasurement_unit=measurement_unit
+                    measurement_unit=measurement_unit
                 )
         self.stdout.write(self.style.SUCCESS('Ингредиенты добавлены'))
