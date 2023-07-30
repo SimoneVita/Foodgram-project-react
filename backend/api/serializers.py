@@ -2,11 +2,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.serializers import (IntegerField, ModelSerializer,
+from rest_framework.serializers import (ModelSerializer,
                                         ReadOnlyField)
 
-from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (Ingredient, IngredientRecipe, Recipe,
+                            Tag)
 from users.serializers import CustomUserSerializer
 
 MIN_VALUE = 1
