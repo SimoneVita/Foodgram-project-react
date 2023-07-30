@@ -96,10 +96,12 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
+        related_name='recipes',
         through='IngredientRecipe'
     )
     tags = models.ManyToManyField(
         Tag,
+        through='TagsRecipes',
         related_name='recipes',
         verbose_name='Теги',
     )
@@ -111,6 +113,30 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class TagsRecipes(models.Model):
+    tags = models.ForeignKey(
+        Tag,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Теги'
+    )
+    recipes = models.ForeignKey(
+        Recipe,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепты'
+    )
+
+    class Meta:
+        ordering = ['-recipes']
+        verbose_name = 'Тег в рецепте'
+        verbose_name_plural = 'Теги и рецептах'
+        constraints = [
+            models.UniqueConstraint(fields=['tags', 'recipes'],
+                                    name='unique_TagsinRecipes')
+        ]
 
 
 class IngredientRecipe(models.Model):
