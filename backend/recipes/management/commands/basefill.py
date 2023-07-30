@@ -3,25 +3,25 @@ import os
 
 from django.core.management.base import BaseCommand
 
-from foodgram.settings import BASE_DIR
+from foodgram import settings
 from recipes.models import Ingredient
 
 
-def get_reader(file_name):
-    csv_path = os.path.join(BASE_DIR, './static/data/', file_name)
-    csv_file = open(csv_path, 'r', encoding='utf-8')
-    reader = csv.reader(csv_file, delimiter=',')
-    return reader
-
-
 class Command(BaseCommand):
-    help = 'Заполнение базы данных'
+    help = 'Импорт данных из csv файла'
 
     def handle(self, *args, **options):
-        reader = get_reader('ingredients.csv')
-        next(reader, None)
-        for row in reader:
-            obj, created = Ingredient.objects.get_or_create(
-                name=row[0],
-                measurement_unit=row[1]
-            )
+        print('Начинаю заполнять базу.')
+        path = os.path.join(settings.BASE_DIR, 'ingredients.csv')
+        with open(path, 'r') as csv_file:
+            reader = csv.reader(csv_file)
+            for row in reader:
+                try:
+                    Ingredient.objects.get_or_create(
+                        name=row[0],
+                        measurement_unit=row[1],
+                    )
+                except Exception as error:
+                    print(f'Ошибка в строке {row}: {error}')
+
+        print('База заполнена.')
