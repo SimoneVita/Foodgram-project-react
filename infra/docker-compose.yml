@@ -8,6 +8,13 @@ services:
     env_file:
       - ./.env
 
+  frontend:
+    image: simonevita/diploma_work:latest
+    volumes:
+      - ../frontend/:/app/result_build/
+    depends_on:
+      - db
+
   web:
     container_name: web
     image: simonevita/diploma_work:latest
@@ -20,25 +27,19 @@ services:
     env_file:
       - ./.env
 
-  frontend:
-    image: simonevita/diploma_work:latest
-    volumes:
-      - ../frontend/:/app/result_build/
-    depends_on:
-      - web
-
   nginx:
-    image: nginx:1.21.3-alpine
+    image: nginx:1.19.3-alpine
     ports:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
+      - ./docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
     depends_on:
       - frontend
+      - web
 
 volumes:
   static_value:
