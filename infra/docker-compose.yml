@@ -9,7 +9,7 @@ services:
       - ./.env
 
   frontend:
-    image: simonevita/diploma_work:latest
+    image: simonevita/diploma_work_front:latest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
@@ -22,7 +22,7 @@ services:
       - static_value:/app/static/
       - media_value:/app/media/
     depends_on:
-      - frontend
+      - db
     env_file:
       - ./.env
 
