@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
@@ -28,9 +29,11 @@ class IngredientRecipeSerializer(ModelSerializer):
     id = ReadOnlyField(source='ingredient.id')
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
-    amount = IntegerField(
-        min_value=MIN_VALUE,
-        max_value=MAX_VALUE
+    amount = serializers.IntegerField(
+        validators=[
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_VALUE)
+        ]
     )
 
     class Meta:
@@ -44,7 +47,6 @@ class RecipeSerializer(ModelSerializer):
     ingredients = IngredientRecipeSerializer(
         source='ingredientrecipe',
         many=True,
-        read_only=True
     )
     tags = TagSerializer(
         many=True,
@@ -164,19 +166,17 @@ class SubscribeCartSerializer(serializers.ModelSerializer):
         if (
                 'favorite' in self.context['request'].path
         ) and (
-                Favorite.objects.filter(
-                    user=user,
+                user.favorite.filter(
                     recipe=recipe
                 ).exists()
         ):
             raise serializers.ValidationError(
                 {'errors': 'Рецепт уже был добавлен!'}
             )
-        elif (
+        if (
                 'shopping_cart' in self.context['request'].path
         ) and (
-                ShoppingCart.objects.filter(
-                    user=user,
+                user.shopping_cart.filter(
                     recipe=recipe
                 ).exists()
         ):
