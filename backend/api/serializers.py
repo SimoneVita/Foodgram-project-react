@@ -29,12 +29,7 @@ class IngredientRecipeSerializer(ModelSerializer):
     id = ReadOnlyField(source='ingredient.id')
     name = ReadOnlyField(source='ingredient.name')
     measurement_unit = ReadOnlyField(source='ingredient.measurement_unit')
-    amount = serializers.ReadOnlyField(
-        validators=[
-            MinValueValidator(MIN_VALUE),
-            MaxValueValidator(MAX_VALUE)
-        ]
-    )
+
 
     class Meta:
         fields = ('id', 'name', 'measurement_unit', 'amount')
@@ -47,7 +42,6 @@ class RecipeSerializer(ModelSerializer):
     ingredients = IngredientRecipeSerializer(
         source='ingredientrecipe',
         many=True,
-        read_only=True
     )
     tags = TagSerializer(
         many=True,
@@ -117,14 +111,7 @@ class RecipeSerializer(ModelSerializer):
                 raise serializers.ValidationError(
                     f'Ингредиент {ingredient.name} уже добавлен!')
             i_set.add(ingredient)
-            if int(i['amount']) < 1:
-                raise serializers.ValidationError(
-                    f'Количество ингредиента {ingredient.name} < 1'
-                )
-            if int(i['amount']) > 32000:
-                raise serializers.ValidationError(
-                    f'Количество ингредиента {ingredient.name} > 32000'
-                )
+
         data['ingredients'] = ingredients
         return data
 
