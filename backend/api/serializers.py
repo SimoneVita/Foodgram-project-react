@@ -87,45 +87,60 @@ class RecipeSerializer(ModelSerializer):
                 and user.shopping_cart.filter(recipe=obj).exists()
                 )
 
+    def recipe_check(self, user, request_method, recipe):
+        if user and recipe and request_method == 'POST':
+            if user.recipes.filter(name=recipe).exists():
+                raise serializers.ValidationError(
+                    'Такой рецепт уже существует!')
+        return user
+
+    def tags_check(self, tag_list):
+        if not tag_list:
+            raise serializers.ValidationError(
+                'Нужно добавить минимум 1 тег!'
+            )
+        unique_tags = list(set(tag_list))
+        if len(tag_list) > len(unique_tags):
+            raise serializers.ValidationError(
+                'Запрещается добавлять одинаковые теги!'
+            )
+        return unique_tags
+
+    def ingredients_check(self, ingredients):
+        if not ingredients:
+            raise serializers.ValidationError(
+                'Блюдо должно содержать хотя бы 1 ингредиент!')
+        ingredients_set = set()
+        for item in ingredients:
+            ingredient = get_object_or_404(
+                Ingredient,
+                id=item['id']
+            )
+            if ingredient in ingredients_set:
+                raise serializers.ValidationError(
+                    f'Ингредиент {ingredient.name} уже добавлен!')
+            ingredients_set.add(ingredient)
+            if int(item['amount']) < MIN_VALUE:
+                raise serializers.ValidationError(
+                    f'Количество ингредиента {ingredient.name} < {MIN_VALUE}'
+                )
+            if int(item['amount']) > MAX_VALUE:
+                raise serializers.ValidationError(
+                    f'Количество ингредиента {ingredient.name} > {MAX_VALUE}'
+                )
+        return ingredients
+
     def validate(self, data):
         user = self.context.get('request').user
         request_method = self.context.get('request').method
         recipe_name = data['name']
-        if user and recipe_name and request_method == 'POST':
-            if user.recipes.filter(name=recipe_name).exists():
-                raise serializers.ValidationError(
-                    'Такой рецепт уже существует!')
-        t_list = self.initial_data['tags']
-        if not t_list:
-            raise serializers.ValidationError(
-                'Нужно добавить минимум 1 тег!'
-            )
-        unique_tags = list(set(t_list))
-        if len(t_list) > len(unique_tags):
-            raise serializers.ValidationError(
-                'Запрещается добавлять одинаковые теги!'
-            )
+        tag_list = self.initial_data['tags']
         ingredients = self.initial_data.get('ingredients')
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Блюдо должно содержать хотя бы 1 ингредиент!')
-        i_set = set()
-        for i in ingredients:
-            ingredient = get_object_or_404(Ingredient,
-                                           id=i['id'])
-            if ingredient in i_set:
-                raise serializers.ValidationError(
-                    f'Ингредиент {ingredient.name} уже добавлен!')
-            i_set.add(ingredient)
-            if int(i['amount']) < 1:
-                raise serializers.ValidationError(
-                    f'Количество ингредиента {ingredient.name} < 1'
-                )
-            if int(i['amount']) > 32000:
-                raise serializers.ValidationError(
-                    f'Количество ингредиента {ingredient.name} > 32000'
-                )
-        data['ingredients'] = ingredients
+        data['author'] = self.recipe_check(user,
+                                           request_method,
+                                           recipe_name)
+        data['tags'] = self.tags_check(tag_list)
+        data['ingredients'] = self.ingredients_check(ingredients)
         return data
 
     def ingredientsrecipe_create(self, ingredients, recipe):
@@ -139,16 +154,20 @@ class RecipeSerializer(ModelSerializer):
 
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(**validated_data)
-        tags = self.initial_data.get('tags')
-        recipe.tags.set(tags)
-        self.ingredientsrecipe_create(ingredients, recipe)
-        return recipe
+        tags = validated_data.pop('tags')
+        author = validated_data.pop('author')
+        new_recipe = Recipe.objects.create(
+            author=author,
+            **validated_data
+        )
+        new_recipe.tags.set(tags)
+        self.ingredientsrecipe_create(ingredients, new_recipe)
+        return new_recipe
 
     def update(self, instance, validated_data):
         ingredients = validated_data.pop('ingredients')
         instance = super().update(instance, validated_data)
-        tags = self.initial_data.get('tags')
+        tags = validated_data.pop('tags')
         instance.tags.clear()
         instance.tags.set(tags)
         instance.ingredients.clear()
